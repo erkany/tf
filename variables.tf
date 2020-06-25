@@ -1,23 +1,15 @@
-variable "aws_region" {
+variable "do_token" {
   type    = string
-  default = "us-west-1"
 }
 
-variable "db_table_name" {
+variable "pub_key" {
   type    = string
-  default = "terraform-learn"
 }
 
-variable "db_read_capacity" {
-  type    = number
-  default = 1
+variable "pvt_key" {
+  type    = string
 }
 
-variable "db_write_capacity" {
-  type    = number
-  default = 1
-}
-
-variable "tag_user_name" {
-  type = string
+variable "ssh_fingerprint" {
+  type    = string
 }

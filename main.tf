@@ -1,28 +1,31 @@
-provider "aws" {
-  version = "2.33.0"
-
-  region = var.aws_region
+provider "digitalocean" {
+  token = var.do_token
 }
 
-provider "random" {
-  version = "2.2"
-}
+resource "digitalocean_droplet" "www-1" {
+    image = "ubuntu-18-04-x64"
+    name = "www-1"
+    region = "nyc1"
+    size = "s-1vcpu-1gb"
+    private_networking = true
+    ssh_keys = [
+      var.ssh_fingerprint
+    ]
 
-resource "random_pet" "table_name" {}
-
-resource "aws_dynamodb_table" "tfc_example_table" {
-  name = "${var.db_table_name}-${random_pet.table_name.id}"
-
-  read_capacity  = var.db_read_capacity
-  write_capacity = var.db_write_capacity
-  hash_key       = "UUID"
-
-  attribute {
-    name = "UUID"
-    type = "S"
+connection {
+    host = self.ipv4_address
+    user = "root"
+    type = "ssh"
+    private_key = file(var.pvt_key)
+    timeout = "2m"
   }
 
-  tags = {
-    user_name = var.tag_user_name
+  provisioner "remote-exec" {
+    inline = [
+      "export PATH=$PATH:/usr/bin",
+      # install nginx
+      "sudo apt-get update",
+      "sudo apt-get -y install nginx"
+    ]
   }
 }
